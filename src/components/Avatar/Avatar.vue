@@ -45,6 +45,27 @@ import ClickOutside from 'vue-click-outside'
 import axios from 'nextcloud-axios'
 import uidToColor from './uidToColor'
 
+/**
+ * 
+ * 
+ * <VueCodeExample title="Show an avatar for the user `admin`">
+ *    ``` vue
+ *    <Avatar user="admin" />
+ *    ```
+ * </VueCodeExample>
+ * 
+ * <VueCodeExample title="Show an avatar with a displayname set">
+ *    ``` vue
+ *    <Avatar user="admin" display-name="Administrator" />
+ *    ```
+ * </VueCodeExample>
+ * 
+ * <VueCodeExample title="Show an avatar for the group `myteam`">
+ *    ``` vue
+ *    <Avatar user="myteam" :isNoUser="true" />
+ *    ```
+ * </VueCodeExample>
+ */
 export default {
 	name: 'Avatar',
 	directives: {
@@ -124,15 +145,22 @@ export default {
 	},
 	data() {
 		return {
+			/** @private */
 			avatarUrlLoaded: null,
+			/** @private */
 			avatarSrcSetLoaded: null,
+			/** @private */
 			userDoesNotExist: false,
+			/** @private */
 			loadingState: true,
+			/** @private */
 			contactsMenuActions: [],
+			/** @private */
 			contactsMenuOpenState: false
 		}
 	},
 	computed: {
+		/** @private */
 		getUserIdentifier() {
 			if (this.isDisplayNameDefined) {
 				return this.displayName
@@ -142,19 +170,24 @@ export default {
 			}
 			return ''
 		},
+		/** @private */
 		isUserDefined() {
 			return typeof this.user !== 'undefined'
 		},
+		/** @private */
 		isDisplayNameDefined() {
 			return typeof this.displayName !== 'undefined'
 		},
+		/** @private */
 		isUrlDefined() {
 			return typeof this.url !== 'undefined'
 		},
+		/** @private */
 		shouldShowPlaceholder() {
 			return this.allowPlaceholder && (
 				this.userDoesNotExist)
 		},
+		/** @private */
 		avatarStyle() {
 			let style = {
 				width: this.size + 'px',
@@ -171,6 +204,7 @@ export default {
 			style.backgroundColor = 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')'
 			return style
 		},
+		/** @private */
 		tooltip() {
 			if (this.disableTooltip) {
 				return false
@@ -181,12 +215,14 @@ export default {
 
 			return this.displayName
 		},
+		/** @private */
 		initials() {
 			if (this.shouldShowPlaceholder) {
 				return this.getUserIdentifier.charAt(0).toUpperCase()
 			}
 			return '?'
 		},
+		/** @private */
 		menu() {
 			return this.contactsMenuActions.map((item) => {
 				return {
@@ -211,6 +247,7 @@ export default {
 		this.loadAvatarUrl()
 	},
 	methods: {
+		/** @private */
 		toggleMenu() {
 			if (this.user === OC.getCurrentUser().uid || this.userDoesNotExist || this.url) {
 				return
@@ -220,9 +257,11 @@ export default {
 				this.fetchContactsMenu()
 			}
 		},
+		/** @private */
 		closeMenu() {
 			this.contactsMenuOpenState = false
 		},
+		/** @private */
 		fetchContactsMenu() {
 			axios.post(OC.generateUrl('contactsmenu/findOne'), 'shareType=0&shareWith=' + encodeURIComponent(this.user)).then((response) => {
 				this.contactsMenuActions = [response.data.topAction].concat(response.data.actions)
@@ -230,6 +269,7 @@ export default {
 				this.contactsMenuOpenState = false
 			})
 		},
+		/** @private */
 		loadAvatarUrl() {
 			this.loadingState = true
 
